@@ -1,3 +1,2 @@
-kvstore
-tests
-*.log
+kv
+data.txt

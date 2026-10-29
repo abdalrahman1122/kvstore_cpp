@@ -1,38 +1,31 @@
 # KVStore-CPP
 
-A small key-value storage engine in C++17 with a command-line interface and crash-safe persistence using an append-only log (the same idea Redis AOF uses).
+A simple key-value store for the command line, written in C++17. Data is saved in a text file, so it is still there the next time you run the program.
 
-## Features
-- In-memory storage with `std::unordered_map` (average O(1) get/set/delete)
-- Append-only log: every write is saved to disk and replayed on startup
-- Commands: `SET`, `GET`, `DEL`, `INCR`, `KEYS [prefix]`, `COUNT`, `EXIT`
-- Input validation (e.g. `INCR` on a non-integer value returns an error)
-- 4 unit tests using `assert`, including a persistence test
-
-## Build and run
+## Commands
 ```bash
-make          # builds ./kvstore and ./tests
-./tests       # runs the unit tests
-./kvstore     # starts the CLI (log file: kv.log)
+./kv set name Abdalrahman   # save a value
+./kv get name               # read a value
+./kv del name               # delete a key
+./kv list                   # show all keys and values
 ```
 
 ## Example
 ```
-> SET name Abdalrahman
+$ ./kv set city Assiut
 OK
-> INCR visits
-1
-> KEYS
-name
-visits
-> DEL name
-1
+$ ./kv get city
+Assiut
+$ ./kv list
+city = Assiut
 ```
 
-## Project structure
-- `kvstore.hpp`: the `KVStore` class (storage + log replay)
-- `main.cpp`: command parser / CLI
-- `tests.cpp`: unit tests
+## Build
+```bash
+make
+```
 
-## Possible next steps
-- Key expiry (TTL), log compaction, a TCP server mode
+## How it works
+- Data is kept in a `std::map` (sorted by key) and stored in `data.txt`, one `key value` pair per line.
+- Every command loads the file, changes the map, and saves the file again.
+- Missing keys and wrong usage show an error message.
